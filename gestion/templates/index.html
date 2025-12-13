@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Biblioteca Comunitaria MJV{% endblock %}
+
+{% block content %}
+        <!-- Masthead -->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">Biblioteca Comunitaria MJV</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">Tu espacio de conocimiento y cultura al alcance de todos</h2>
+                        <a class="btn btn-primary btn-lg" href="{% url 'registro' %}">Únete Ahora</a>
+                        <a class="btn btn-outline-light btn-lg ms-2" href="#about">Conocer Más</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- About -->
+        <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Bienvenido a Nuestra Biblioteca</h2>
+                        <p class="text-white-50">
+                            La Biblioteca Comunitaria MJV es un espacio dedicado al fomento de la lectura y el acceso gratuito 
+                            a la cultura. Ofrecemos un amplio catálogo de libros en diversos géneros para toda la comunidad.
+                            Regístrate hoy y comienza a disfrutar de nuestros servicios de préstamo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Services -->
+        <section class="projects-section bg-light" id="services">
+            <div class="container px-4 px-lg-5">
+                <div class="text-center mb-5">
+                    <h2 class="mb-4">Nuestros Servicios</h2>
+                    <p class="text-muted">Todo lo que ofrecemos para nuestra comunidad</p>
+                </div>
+                
+                <!-- Service One -->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white"><i class="fas fa-book me-2"></i>Préstamo de Libros</h4>
+                                    <p class="mb-0 text-white-50">Sistema de préstamo eficiente con plazos flexibles. Lleva a casa tus libros favoritos y disfruta de la lectura.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-primary text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white"><i class="fas fa-search me-2"></i>Catálogo Digital</h4>
+                                    <p class="mb-0 text-white-50">Busca y consulta la disponibilidad de libros en tiempo real desde cualquier dispositivo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Two -->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="bg-primary text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white"><i class="fas fa-users me-2"></i>Gestión de Usuarios</h4>
+                                    <p class="mb-0 text-white-50">Sistema personalizado para cada usuario con historial de préstamos y recordatorios.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white"><i class="fas fa-clock me-2"></i>Acceso 24/7</h4>
+                                    <p class="mb-0 text-white-50">Consulta el catálogo y gestiona tus préstamos en cualquier momento del día.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact -->
+        <section class="contact-section bg-black" id="contact">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-map-marked-alt text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Dirección</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50">Av. Principal 123, Comuna MJV</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-envelope text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Email</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50"><a href="mailto:contacto@bibliotecamjv.cl">contacto@bibliotecamjv.cl</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-mobile-alt text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Teléfono</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50">+56 9 1234 5678</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="social d-flex justify-content-center mt-5">
+                    <a class="mx-2" href="#!"><i class="fab fa-twitter"></i></a>
+                    <a class="mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
+                    <a class="mx-2" href="#!"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </section>
+{% endblock %}

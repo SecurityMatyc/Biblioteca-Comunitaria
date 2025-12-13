@@ -1,0 +1,352 @@
+{% extends "base_panel.html" %}
+{% load static %}
+
+{% block title %}Mi Panel - Biblioteca Comunitaria MJV{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <!-- Información del Usuario -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                    <h4>{{ user.get_full_name|default:user.username }}</h4>
+                    {% if perfil %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-id-card me-2"></i>{{ perfil.get_rol_display }}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-envelope me-2"></i>{{ user.email }}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-phone me-2"></i>{{ perfil.telefono }}
+                        </p>
+                        <p class="text-muted">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ perfil.direccion }}
+                        </p>
+                    {% endif %}
+                    <hr>
+                    <button type="button" class="btn btn-info btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+                        <i class="fas fa-edit me-1"></i> Editar Mi Perfil
+                    </button>
+                    <a href="{% url 'disponibilidad_libros' %}" class="btn btn-primary btn-sm w-100 mb-2">
+                        <i class="fas fa-search me-1"></i> Buscar Libros
+                    </a>
+                    <a href="{% url 'registrar_prestamo' %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                        <i class="fas fa-book me-1"></i> Solicitar Préstamo
+                    </a>
+                    <a href="{% url 'registrar_devolucion' %}" class="btn btn-outline-success btn-sm w-100">
+                        <i class="fas fa-undo me-1"></i> Devolver Libro
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Préstamos Activos -->
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-books me-2"></i>Mis Préstamos Activos ({{ total_prestamos_activos }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if mis_prestamos %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Libro</th>
+                                        <th>Autor</th>
+                                        <th>Fecha Préstamo</th>
+                                        <th>Devolución Esperada</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for prestamo in mis_prestamos %}
+                                        <tr>
+                                            <td><strong>{{ prestamo.libro.titulo }}</strong></td>
+                                            <td>{{ prestamo.libro.autor }}</td>
+                                            <td>{{ prestamo.fecha_prestamo|date:"d/m/Y" }}</td>
+                                            <td>{{ prestamo.fecha_devolucion_esperada|date:"d/m/Y" }}</td>
+                                            <td>
+                                                {% if prestamo.esta_vencido %}
+                                                    <span class="badge bg-danger">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        Vencido ({{ prestamo.dias_restantes_abs }} días)
+                                                    </span>
+                                                {% elif prestamo.dias_restantes <= 2 %}
+                                                    <span class="badge bg-warning text-dark">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        Por vencer ({{ prestamo.dias_restantes }} días)
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>
+                                                        Vigente ({{ prestamo.dias_restantes }} días)
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No tienes préstamos activos en este momento.</p>
+                            <a href="{% url 'disponibilidad_libros' %}" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i> Explorar Catálogo
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Historial de Préstamos -->
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial Reciente</h5>
+                </div>
+                <div class="card-body">
+                    {% if historial %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Libro</th>
+                                        <th>Fecha Préstamo</th>
+                                        <th>Fecha Devolución</th>
+                                        <th>Multa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for prestamo in historial %}
+                                        <tr>
+                                            <td>{{ prestamo.libro.titulo }}</td>
+                                            <td>{{ prestamo.fecha_prestamo|date:"d/m/Y" }}</td>
+                                            <td>{{ prestamo.fecha_devolucion_real|date:"d/m/Y" }}</td>
+                                            <td>
+                                                {% if prestamo.multa > 0 %}
+                                                    <span class="text-danger">${{ prestamo.multa }}</span>
+                                                {% else %}
+                                                    <span class="text-success">Sin multa</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">No hay historial de préstamos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Editar Perfil -->
+<div class="modal fade" id="editarPerfilModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Editar Mi Perfil</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Pestañas -->
+                <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button">
+                            <i class="fas fa-user me-1"></i>Datos Personales
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="username-tab" data-bs-toggle="tab" data-bs-target="#username" type="button">
+                            <i class="fas fa-at me-1"></i>Usuario
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button">
+                            <i class="fas fa-lock me-1"></i>Contraseña
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Contenido de pestañas -->
+                <div class="tab-content">
+                    <!-- Pestaña: Datos Personales -->
+                    <div class="tab-pane fade show active" id="datos">
+                        <form method="POST" action="{% url 'editar_perfil' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="datos">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required minlength="2">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" required minlength="2">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                    <small class="text-muted">Debe ser único en el sistema</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="text" name="telefono" class="form-control" value="{{ perfil.telefono }}" required maxlength="9" pattern="[0-9]{9}">
+                                    <small class="text-muted">9 dígitos</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Dirección</label>
+                                    <input type="text" name="direccion" class="form-control" value="{{ perfil.direccion }}" required>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Contraseña Actual <span class="text-danger">*</span></label>
+                                    <input type="password" name="password_actual" class="form-control" placeholder="Confirma tu contraseña" required>
+                                    <small class="text-muted">Por seguridad, confirma tu contraseña actual</small>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Pestaña: Cambiar Username -->
+                    <div class="tab-pane fade" id="username">
+                        <form method="POST" action="{% url 'editar_perfil' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="username">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Usuario actual:</strong> {{ user.username }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nuevo Nombre de Usuario</label>
+                                <input type="text" name="nuevo_username" class="form-control" placeholder="Ej: juan_perez" required minlength="3" pattern="[a-zA-Z0-9_]+">
+                                <small class="text-muted">Solo letras, números y guión bajo. Mínimo 3 caracteres.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña Actual <span class="text-danger">*</span></label>
+                                <input type="password" name="password_actual" class="form-control" placeholder="Confirma tu contraseña" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-check me-2"></i>Cambiar Usuario
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Pestaña: Cambiar Contraseña -->
+                    <div class="tab-pane fade" id="password">
+                        <form method="POST" action="{% url 'editar_perfil' %}" id="formCambiarPassword">
+                            {% csrf_token %}
+                            <input type="hidden" name="accion" value="password">
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña Actual <span class="text-danger">*</span></label>
+                                <input type="password" name="password_actual" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nueva Contraseña</label>
+                                <input type="password" name="nueva_password" id="nueva_password" class="form-control" required>
+                                <div class="password-strength mt-2" id="strength-bar-modal"></div>
+                                <small id="password-feedback-modal" class="text-muted"></small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Confirmar Nueva Contraseña</label>
+                                <input type="password" name="confirmar_password" id="confirmar_password" class="form-control" required>
+                            </div>
+                            <div class="alert alert-warning">
+                                <strong>Requisitos:</strong>
+                                <ul class="mb-0 mt-2" style="font-size: 0.9rem;">
+                                    <li id="req-length-modal">Mínimo 8 caracteres</li>
+                                    <li id="req-upper-modal">Al menos 1 mayúscula</li>
+                                    <li id="req-lower-modal">Al menos 1 minúscula</li>
+                                    <li id="req-number-modal">Al menos 1 número</li>
+                                    <li id="req-special-modal">Al menos 1 carácter especial (!@#$%^&*)</li>
+                                </ul>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.password-strength {
+    height: 5px;
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+.strength-weak { background-color: #dc3545; width: 33%; }
+.strength-medium { background-color: #ffc107; width: 66%; }
+.strength-strong { background-color: #28a745; width: 100%; }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Validar contraseña en tiempo real
+document.getElementById('nueva_password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const strengthBar = document.getElementById('strength-bar-modal');
+    const feedback = document.getElementById('password-feedback-modal');
+    
+    const hasLength = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    document.getElementById('req-length-modal').style.color = hasLength ? '#28a745' : '#856404';
+    document.getElementById('req-upper-modal').style.color = hasUpper ? '#28a745' : '#856404';
+    document.getElementById('req-lower-modal').style.color = hasLower ? '#28a745' : '#856404';
+    document.getElementById('req-number-modal').style.color = hasNumber ? '#28a745' : '#856404';
+    document.getElementById('req-special-modal').style.color = hasSpecial ? '#28a745' : '#856404';
+    
+    const requisitos = [hasLength, hasUpper, hasLower, hasNumber, hasSpecial];
+    const cumplidos = requisitos.filter(Boolean).length;
+    
+    if (password.length === 0) {
+        strengthBar.className = 'password-strength';
+        feedback.textContent = '';
+    } else if (cumplidos <= 2) {
+        strengthBar.className = 'password-strength strength-weak';
+        feedback.textContent = 'Débil';
+        feedback.style.color = '#dc3545';
+    } else if (cumplidos <= 4) {
+        strengthBar.className = 'password-strength strength-medium';
+        feedback.textContent = 'Media';
+        feedback.style.color = '#ffc107';
+    } else {
+        strengthBar.className = 'password-strength strength-strong';
+        feedback.textContent = 'Fuerte';
+        feedback.style.color = '#28a745';
+    }
+});
+
+// Validar que las contraseñas coincidan
+document.getElementById('formCambiarPassword').addEventListener('submit', function(e) {
+    const nueva = document.getElementById('nueva_password').value;
+    const confirmar = document.getElementById('confirmar_password').value;
+    
+    if (nueva !== confirmar) {
+        e.preventDefault();
+        alert('Las contraseñas no coinciden');
+        return false;
+    }
+});
+</script>
+{% endblock %}

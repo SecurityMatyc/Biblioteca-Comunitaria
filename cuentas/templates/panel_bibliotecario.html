@@ -1,0 +1,105 @@
+{% extends "base_panel.html" %}
+{% load static %}
+
+{% block title %}Panel Bibliotecario - Biblioteca Comunitaria MJV{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 pt-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4">Panel de Estadísticas</h1>
+    <p class="lead text-muted">Resumen del estado de la biblioteca</p>
+  </div>
+
+    <!-- Estadísticas principales -->
+  <!-- Estadísticas principales -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-primary">
+        <div class="card-body">
+          <i class="fas fa-book fa-3x text-primary mb-3"></i>
+          <h2 class="display-4 mb-0">{{ total_libros }}</h2>
+          <p class="text-muted mb-0">Total de Libros</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-warning">
+        <div class="card-body">
+          <i class="fas fa-book-open fa-3x text-warning mb-3"></i>
+          <h2 class="display-4 mb-0">{{ prestamos_activos }}</h2>
+          <p class="text-muted mb-0">Préstamos Activos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-danger">
+        <div class="card-body">
+          <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+          <h2 class="display-4 mb-0">{{ prestamos_vencidos }}</h2>
+          <p class="text-muted mb-0">Préstamos Vencidos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-success">
+        <div class="card-body">
+          <i class="fas fa-tags fa-3x text-success mb-3"></i>
+          <h2 class="display-4 mb-0">{{ libros_por_genero|length }}</h2>
+          <p class="text-muted mb-0">Géneros Diferentes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distribución por género -->
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Libros por Género</h4>
+        </div>
+        <div class="card-body">
+          {% if libros_por_genero %}
+            {% for item in libros_por_genero %}
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span><strong>{{ item.genero|title }}</strong></span>
+                  <span class="text-muted">{{ item.total }} libro{{ item.total|pluralize }}</span>
+                </div>
+                <div class="progress" style="height: 25px;">
+                  {% if total_libros > 0 %}
+                    {% widthratio item.total total_libros 100 as percent %}
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ percent }}%" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">{{ percent }}%</div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-center text-muted">No hay libros registrados</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Volver al Dashboard</a>
+        <a href="{% url 'gestionar_libros' %}" class="btn btn-primary">Gestionar Libros</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.genre-bar-fill').forEach(function(el) {
+      var p = el.getAttribute('data-percent') || '0';
+      p = parseFloat(p) || 0;
+      el.style.width = p + '%';
+    });
+  });
+</script>

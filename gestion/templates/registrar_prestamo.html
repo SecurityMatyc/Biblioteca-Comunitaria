@@ -1,0 +1,85 @@
+{% extends "base_panel.html" %}
+{% load static %}
+
+{% block title %}Solicitar Préstamo - Biblioteca Comunitaria MJV{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 pt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0"><i class="fas fa-book me-2"></i>Solicitar Préstamo de Libro</h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Selecciona un libro disponible para realizar el préstamo</p>
+
+          <!-- Filtro de búsqueda -->
+          <form method="GET" class="mb-4">
+            <div class="input-group">
+              <input type="text" name="buscar" class="form-control" placeholder="Buscar por título, autor o género..." 
+                     value="{{ busqueda }}">
+              <button type="submit" class="btn btn-primary">Buscar</button>
+              {% if busqueda %}
+                <a href="{% url 'registrar_prestamo' %}" class="btn btn-outline-secondary">Limpiar</a>
+              {% endif %}
+            </div>
+          </form>
+
+          {% if libros %}
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>
+              {{ total_disponibles }} libro{{ total_disponibles|pluralize }} disponible{{ total_disponibles|pluralize }} para préstamo
+            </div>
+
+            <form method="POST">
+              {% csrf_token %}
+              
+              <div class="mb-3">
+                <label for="libro_id" class="form-label"><strong>Selecciona un libro:</strong></label>
+                <select name="libro_id" id="libro_id" required class="form-select">
+                  <option value="">-- Selecciona un libro --</option>
+                  {% for libro in libros %}
+                    <option value="{{ libro.id }}">{{ libro.titulo }} - {{ libro.autor }} ({{ libro.get_genero_display }})</option>
+                  {% endfor %}
+                </select>
+                <small class="text-muted">Solo se muestran libros que están disponibles para préstamo</small>
+              </div>
+
+              <div class="mb-3">
+                <label for="dias_prestamo" class="form-label"><strong>Días de préstamo:</strong></label>
+                <select name="dias_prestamo" id="dias_prestamo" required class="form-select">
+                  <option value="7">7 días</option>
+                  <option value="14">14 días</option>
+                  <option value="21">21 días</option>
+                </select>
+                <small class="text-muted">Recuerda: $1,000 de multa por cada día de atraso</small>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Volver</a>
+                <button type="submit" class="btn btn-primary">Registrar Préstamo</button>
+              </div>
+            </form>
+          {% else %}
+            <div class="alert alert-warning">
+              <i class="fas fa-info-circle me-2"></i>
+              No hay libros disponibles en este momento. 
+              {% if busqueda %}
+                Intenta con otra búsqueda.
+              {% else %}
+                Vuelve más tarde.
+              {% endif %}
+            </div>
+            <div class="text-center">
+              <a href="{% url 'dashboard' %}" class="btn btn-primary">Volver al Dashboard</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

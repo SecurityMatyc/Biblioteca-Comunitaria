@@ -1,0 +1,324 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+
+{% block title %}Registro - Biblioteca Comunitaria MJV{% endblock %}
+
+{% block extra_css %}
+<style>
+  .password-strength {
+    height: 5px;
+    border-radius: 3px;
+    margin-top: 5px;
+    transition: all 0.3s;
+  }
+  .strength-weak { background-color: #dc3545; width: 33%; }
+  .strength-medium { background-color: #ffc107; width: 66%; }
+  .strength-strong { background-color: #28a745; width: 100%; }
+  .validation-icon {
+    position: absolute;
+    right: 10px;
+    top: 38px;
+  }
+  .valid-field { color: #28a745; }
+  .invalid-field { color: #dc3545; }
+  .form-group { position: relative; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2 class="mb-0"><i class="fas fa-user-plus me-2"></i>Crear Cuenta</h2>
+          <p class="mb-0 mt-2">Regístrate para acceder al sistema de préstamos</p>
+        </div>
+        <div class="p-4">
+          <form method="POST" id="registroForm">
+            {% csrf_token %}
+            
+            <h5 class="mb-3 text-primary"><i class="fas fa-user me-2"></i>Datos Personales</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="first_name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                  <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Tu nombre" required minlength="2">
+                  <span class="validation-icon" id="first_name_icon"></span>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="last_name" class="form-label">Apellido <span class="text-danger">*</span></label>
+                  <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Tu apellido" required minlength="2">
+                  <span class="validation-icon" id="last_name_icon"></span>
+                </div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="form-group">
+                  <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                  <input type="email" name="email" id="email" class="form-control" placeholder="tu@email.com" required>
+                  <span class="validation-icon" id="email_icon"></span>
+                  <small class="text-muted">Tu usuario se generará automáticamente desde tu email</small>
+                </div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="form-group">
+                  <label for="rut" class="form-label">RUT <span class="text-danger">*</span></label>
+                  <input type="text" name="rut" id="rut" class="form-control" placeholder="12.345.678-9" required maxlength="12">
+                  <span class="validation-icon" id="rut_icon"></span>
+                  <small class="text-muted">Formato: 12.345.678-9 o 12345678-9</small>
+                </div>
+              </div>
+              <div class="col-12 mb-3">
+                <label for="direccion" class="form-label">Dirección <span class="text-danger">*</span></label>
+                <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Calle, número, comuna" required>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="form-group">
+                  <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+                  <input type="text" name="telefono" id="telefono" class="form-control" placeholder="912345678" required maxlength="9">
+                  <span class="validation-icon" id="telefono_icon"></span>
+                  <small class="text-muted">9 dígitos sin espacios ni +56</small>
+                </div>
+              </div>
+            </div>
+
+            <h5 class="mb-3 mt-4 text-primary"><i class="fas fa-lock me-2"></i>Seguridad</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                  <input type="password" name="password" id="password" class="form-control" placeholder="Mínimo 8 caracteres" required>
+                  <div class="password-strength" id="strength-bar"></div>
+                  <small id="password-feedback" class="text-muted"></small>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="password2" class="form-label">Confirmar Contraseña <span class="text-danger">*</span></label>
+                  <input type="password" name="password2" id="password2" class="form-control" placeholder="Repetir contraseña" required>
+                  <span class="validation-icon" id="password2_icon"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info mt-3">
+              <strong>Requisitos de contraseña:</strong>
+              <ul class="mb-0 mt-2">
+                <li id="req-length">Mínimo 8 caracteres</li>
+                <li id="req-upper">Al menos 1 mayúscula</li>
+                <li id="req-lower">Al menos 1 minúscula</li>
+                <li id="req-number">Al menos 1 número</li>
+                <li id="req-special">Al menos 1 carácter especial (!@#$%^&*)</li>
+              </ul>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-check me-2"></i>Crear Cuenta
+              </button>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+              <p class="text-muted mb-2">¿Ya tienes cuenta?</p>
+              <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+              </a>
+            </div>
+
+            <div class="text-center mt-3">
+              <a href="{% url 'home' %}" class="text-muted text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i>Volver al inicio
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Validar RUT chileno
+function validarRUT(rut) {
+  rut = rut.replace(/\./g, '').replace(/-/g, '').toUpperCase();
+  if (rut.length < 2) return false;
+  
+  const cuerpo = rut.slice(0, -1);
+  const dv = rut.slice(-1);
+  
+  if (!/^\d+$/.test(cuerpo)) return false;
+  
+  let suma = 0;
+  let multiplicador = 2;
+  
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += parseInt(cuerpo[i]) * multiplicador;
+    multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+  }
+  
+  const dvEsperado = 11 - (suma % 11);
+  const dvCalculado = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : String(dvEsperado);
+  
+  return dv === dvCalculado;
+}
+
+// Formatear RUT mientras escribe
+document.getElementById('rut').addEventListener('input', function(e) {
+  let rut = e.target.value.replace(/\./g, '').replace(/-/g, '');
+  
+  if (rut.length > 1) {
+    const cuerpo = rut.slice(0, -1);
+    const dv = rut.slice(-1);
+    rut = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+  }
+  
+  e.target.value = rut;
+  
+  const icon = document.getElementById('rut_icon');
+  if (rut.length > 3 && validarRUT(rut)) {
+    icon.innerHTML = '<i class="fas fa-check-circle valid-field"></i>';
+  } else if (rut.length > 3) {
+    icon.innerHTML = '<i class="fas fa-times-circle invalid-field"></i>';
+  } else {
+    icon.innerHTML = '';
+  }
+});
+
+// Validar teléfono
+document.getElementById('telefono').addEventListener('input', function(e) {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 9);
+  
+  const icon = document.getElementById('telefono_icon');
+  if (e.target.value.length === 9) {
+    icon.innerHTML = '<i class="fas fa-check-circle valid-field"></i>';
+  } else if (e.target.value.length > 0) {
+    icon.innerHTML = '<i class="fas fa-times-circle invalid-field"></i>';
+  } else {
+    icon.innerHTML = '';
+  }
+});
+
+// Validar nombre y apellido
+['first_name', 'last_name'].forEach(field => {
+  document.getElementById(field).addEventListener('input', function(e) {
+    const icon = document.getElementById(field + '_icon');
+    if (e.target.value.length >= 2) {
+      icon.innerHTML = '<i class="fas fa-check-circle valid-field"></i>';
+    } else if (e.target.value.length > 0) {
+      icon.innerHTML = '<i class="fas fa-times-circle invalid-field"></i>';
+    } else {
+      icon.innerHTML = '';
+    }
+  });
+});
+
+// Validar email
+document.getElementById('email').addEventListener('input', function(e) {
+  const icon = document.getElementById('email_icon');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+  if (emailRegex.test(e.target.value)) {
+    icon.innerHTML = '<i class="fas fa-check-circle valid-field"></i>';
+  } else if (e.target.value.length > 0) {
+    icon.innerHTML = '<i class="fas fa-times-circle invalid-field"></i>';
+  } else {
+    icon.innerHTML = '';
+  }
+});
+
+// Validar contraseña y mostrar fortaleza
+document.getElementById('password').addEventListener('input', function(e) {
+  const password = e.target.value;
+  const strengthBar = document.getElementById('strength-bar');
+  const feedback = document.getElementById('password-feedback');
+  
+  // Requisitos
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  // Actualizar lista de requisitos
+  document.getElementById('req-length').style.color = hasLength ? '#28a745' : '#dc3545';
+  document.getElementById('req-upper').style.color = hasUpper ? '#28a745' : '#dc3545';
+  document.getElementById('req-lower').style.color = hasLower ? '#28a745' : '#dc3545';
+  document.getElementById('req-number').style.color = hasNumber ? '#28a745' : '#dc3545';
+  document.getElementById('req-special').style.color = hasSpecial ? '#28a745' : '#dc3545';
+  
+  // Calcular fortaleza
+  const requisitos = [hasLength, hasUpper, hasLower, hasNumber, hasSpecial];
+  const cumplidos = requisitos.filter(Boolean).length;
+  
+  if (password.length === 0) {
+    strengthBar.className = 'password-strength';
+    feedback.textContent = '';
+  } else if (cumplidos <= 2) {
+    strengthBar.className = 'password-strength strength-weak';
+    feedback.textContent = 'Contraseña débil';
+    feedback.style.color = '#dc3545';
+  } else if (cumplidos <= 4) {
+    strengthBar.className = 'password-strength strength-medium';
+    feedback.textContent = 'Contraseña media';
+    feedback.style.color = '#ffc107';
+  } else {
+    strengthBar.className = 'password-strength strength-strong';
+    feedback.textContent = 'Contraseña fuerte';
+    feedback.style.color = '#28a745';
+  }
+});
+
+// Validar confirmación de contraseña
+document.getElementById('password2').addEventListener('input', function(e) {
+  const password = document.getElementById('password').value;
+  const icon = document.getElementById('password2_icon');
+  
+  if (e.target.value.length > 0) {
+    if (e.target.value === password) {
+      icon.innerHTML = '<i class="fas fa-check-circle valid-field"></i>';
+    } else {
+      icon.innerHTML = '<i class="fas fa-times-circle invalid-field"></i>';
+    }
+  } else {
+    icon.innerHTML = '';
+  }
+});
+
+// Validar formulario antes de enviar
+document.getElementById('registroForm').addEventListener('submit', function(e) {
+  const password = document.getElementById('password').value;
+  const rut = document.getElementById('rut').value;
+  const telefono = document.getElementById('telefono').value;
+  
+  if (!validarRUT(rut)) {
+    e.preventDefault();
+    alert('El RUT ingresado no es válido');
+    return false;
+  }
+  
+  if (telefono.length !== 9) {
+    e.preventDefault();
+    alert('El teléfono debe tener exactamente 9 dígitos');
+    return false;
+  }
+  
+  const hasLength = password.length >= 8;
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  if (!(hasLength && hasUpper && hasLower && hasNumber && hasSpecial)) {
+    e.preventDefault();
+    alert('La contraseña no cumple con todos los requisitos de seguridad');
+    return false;
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends "base_panel.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4 pt-3">
+  <div class="row">
+    <div class="col-12">
+      
+      <!-- Botón Volver al Inicio -->
+      <div class="mb-4 text-center">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark">
+          <i class="fas fa-home me-2"></i>Volver al Inicio
+        </a>
+      </div>
+      
+      <!-- Estadísticas rápidas -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow-sm" style="background-color: #e3f2fd; border: none;">
+            <div class="card-body">
+              <h2 class="display-4 text-primary mb-0">{{ total_libros }}</h2>
+              <p class="text-primary fw-bold mb-0">Total Libros</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow-sm" style="background-color: #e8f5e9; border: none;">
+            <div class="card-body">
+              <h2 class="display-4 text-success mb-0">{{ libros_disponibles }}</h2>
+              <p class="text-success fw-bold mb-0">Disponibles</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow-sm" style="background-color: #fff3e0; border: none;">
+            <div class="card-body">
+              <h2 class="display-4 text-warning mb-0">{{ prestamos_activos }}</h2>
+              <p class="text-warning fw-bold mb-0">Préstamos Activos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIS PRÉSTAMOS ACTIVOS -->
+      {% if mis_prestamos %}
+        <div class="alert alert-warning border-start border-5 border-warning mb-4">
+          <h3 class="alert-heading mb-3"><i class="fas fa-book me-2"></i>Mis Libros Prestados</h3>
+          
+          {% for prestamo in mis_prestamos %}
+            <div class="card mb-3 {% if prestamo.esta_vencido %}border-danger{% elif prestamo.dias_restantes <= 2 %}border-warning{% else %}border-success{% endif %} border-2">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <h4 class="card-title mb-2">{{ prestamo.libro.titulo }}</h4>
+                    <p class="mb-1"><strong>Autor:</strong> {{ prestamo.libro.autor }}</p>
+                    <p class="mb-1"><strong>Fecha de préstamo:</strong> {{ prestamo.fecha_prestamo|date:"d/m/Y" }}</p>
+                    <p class="mb-0"><strong>Fecha límite:</strong> {{ prestamo.fecha_devolucion_esperada|date:"d/m/Y" }}</p>
+                  </div>
+                  
+                  <div class="col-md-4 text-center">
+                    {% if prestamo.esta_vencido %}
+                      <div class="bg-danger bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-2"></i>
+                        <h5 class="text-danger fw-bold">VENCIDO</h5>
+                        <p class="mb-0 text-danger">Hace {{ prestamo.dias_restantes_abs }} día{{ prestamo.dias_restantes_abs|pluralize }}</p>
+                        <p class="mb-0 fw-bold text-danger">Multa: ${{ prestamo.dias_restantes_abs }}000</p>
+                      </div>
+                    {% elif prestamo.dias_restantes == 0 %}
+                      <div class="bg-warning bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-clock fa-3x text-warning mb-2"></i>
+                        <h5 class="text-warning fw-bold">¡HOY VENCE!</h5>
+                      </div>
+                    {% elif prestamo.dias_restantes <= 2 %}
+                      <div class="bg-warning bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-hourglass-half fa-3x text-warning mb-2"></i>
+                        <h5 class="text-warning fw-bold">Quedan {{ prestamo.dias_restantes }} día{{ prestamo.dias_restantes|pluralize }}</h5>
+                        <p class="mb-0">¡Devolver pronto!</p>
+                      </div>
+                    {% else %}
+                      <div class="bg-success bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                        <h5 class="text-success fw-bold">{{ prestamo.dias_restantes }} día{{ prestamo.dias_restantes|pluralize }}</h5>
+                        <p class="mb-0">restantes</p>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+          <div class="text-center mt-3">
+            <a href="{% url 'registrar_devolucion' %}" class="btn btn-primary btn-lg">
+              <i class="fas fa-undo me-2"></i>Devolver un Libro
+            </a>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Título de acciones -->
+      <div class="text-center my-4">
+        <h2 class="fw-bold">¿Qué acción deseas realizar?</h2>
+        <p class="text-muted">Selecciona uno de los procesos disponibles del sistema</p>
+      </div>
+
+      <!-- Opciones para TODOS los usuarios -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-book-reader fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Solicitar un libro</h5>
+              <p class="card-text text-muted">Ver libros disponibles y realizar un préstamo.</p>
+              <a href="{% url 'registrar_prestamo' %}" class="btn btn-primary">Ir</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-undo-alt fa-3x text-success mb-3"></i>
+              <h5 class="card-title">Devolver un libro</h5>
+              <p class="card-text text-muted">Registrar la devolución de un libro y ver multas si corresponde.</p>
+              <a href="{% url 'registrar_devolucion' %}" class="btn btn-success">Ir</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+              <h5 class="card-title">Disponibilidad de libros</h5>
+              <p class="card-text text-muted">Revisar si existe disponibilidad de libros.</p>
+              <a href="{% url 'disponibilidad_libros' %}" class="btn btn-info text-white">Ir</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opciones SOLO para Bibliotecarios y Administradores -->
+      {% if perfil and perfil.rol in 'bibliotecario,administrador' %}
+        <div class="border-top border-3 border-primary pt-4 mt-5">
+          <div class="text-center mb-4">
+            <h2 class="fw-bold"><i class="fas fa-tools me-2"></i>Panel de Gestión</h2>
+            <p class="text-muted">Herramientas exclusivas para bibliotecarios</p>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="card shadow border-3 border-primary h-100">
+                <div class="card-body text-center">
+                  <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                  <h5 class="card-title">Gestionar Libros</h5>
+                  <p class="card-text text-muted">Agregar, editar y eliminar libros del catálogo.</p>
+                  <a href="{% url 'gestionar_libros' %}" class="btn btn-primary">Ir</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card shadow border-3 border-primary h-100">
+                <div class="card-body text-center">
+                  <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                  <h5 class="card-title">Ver Estadísticas</h5>
+                  <p class="card-text text-muted">Consultar estadísticas detalladas del sistema.</p>
+                  <a href="{% url 'panel_bibliotecario' %}" class="btn btn-primary">Ir</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
