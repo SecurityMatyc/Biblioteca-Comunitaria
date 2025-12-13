@@ -16,48 +16,19 @@
         <div class="card-body">
           <!-- Filtro de búsqueda -->
           <form method="GET" class="mb-4">
-            <div class="input-group">
+            <div class="input-group input-group-lg">
               <input type="text" name="buscar" class="form-control" placeholder="Buscar por título, autor o género..." 
                      value="{{ busqueda }}">
-              <button type="submit" class="btn btn-primary">Buscar</button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Buscar
+              </button>
               {% if busqueda %}
-                <a href="{% url 'disponibilidad_libros' %}" class="btn btn-outline-secondary">Limpiar</a>
+                <a href="{% url 'disponibilidad_libros' %}" class="btn btn-outline-secondary">
+                  <i class="fas fa-times me-2"></i>Limpiar
+                </a>
               {% endif %}
             </div>
           </form>
-
-          <!-- Estadísticas -->
-          <div class="row g-3 mb-4">
-            <div class="col-md-4">
-              <div class="card text-center border-primary">
-                <div class="card-body">
-                  <i class="fas fa-book fa-2x text-primary mb-2"></i>
-                  <h3 class="display-6 mb-0">{{ total_libros }}</h3>
-                  <p class="text-muted mb-0">Total de Libros</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-4">
-              <div class="card text-center border-success">
-                <div class="card-body">
-                  <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                  <h3 class="display-6 mb-0">{{ libros_disponibles }}</h3>
-                  <p class="text-muted mb-0">Disponibles</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-4">
-              <div class="card text-center border-danger">
-                <div class="card-body">
-                  <i class="fas fa-book-reader fa-2x text-danger mb-2"></i>
-                  <h3 class="display-6 mb-0">{{ libros_prestados }}</h3>
-                  <p class="text-muted mb-0">Prestados</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Lista de Libros -->
           {% if libros %}

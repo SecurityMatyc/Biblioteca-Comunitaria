@@ -14,33 +14,35 @@
         </a>
       </div>
       
-      <!-- Estadísticas rápidas -->
-      <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-          <div class="card text-center shadow-sm" style="background-color: #e3f2fd; border: none;">
-            <div class="card-body">
-              <h2 class="display-4 text-primary mb-0">{{ total_libros }}</h2>
-              <p class="text-primary fw-bold mb-0">Total Libros</p>
+      <!-- Estadísticas rápidas (Solo para Bibliotecarios y Administradores) -->
+      {% if perfil and perfil.rol in 'bibliotecario,administrador' %}
+        <div class="row mb-4">
+          <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm" style="background-color: #e3f2fd; border: none;">
+              <div class="card-body">
+                <h2 class="display-4 text-primary mb-0">{{ total_libros }}</h2>
+                <p class="text-primary fw-bold mb-0">Total Libros</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm" style="background-color: #e8f5e9; border: none;">
+              <div class="card-body">
+                <h2 class="display-4 text-success mb-0">{{ libros_disponibles }}</h2>
+                <p class="text-success fw-bold mb-0">Disponibles</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm" style="background-color: #fff3e0; border: none;">
+              <div class="card-body">
+                <h2 class="display-4 text-warning mb-0">{{ prestamos_activos }}</h2>
+                <p class="text-warning fw-bold mb-0">Préstamos Activos</p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
-          <div class="card text-center shadow-sm" style="background-color: #e8f5e9; border: none;">
-            <div class="card-body">
-              <h2 class="display-4 text-success mb-0">{{ libros_disponibles }}</h2>
-              <p class="text-success fw-bold mb-0">Disponibles</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card text-center shadow-sm" style="background-color: #fff3e0; border: none;">
-            <div class="card-body">
-              <h2 class="display-4 text-warning mb-0">{{ prestamos_activos }}</h2>
-              <p class="text-warning fw-bold mb-0">Préstamos Activos</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {% endif %}
 
       <!-- MIS PRÉSTAMOS ACTIVOS -->
       {% if mis_prestamos %}
