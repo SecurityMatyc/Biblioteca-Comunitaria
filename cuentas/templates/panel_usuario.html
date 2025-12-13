@@ -6,9 +6,9 @@
 {% block content %}
 
 <div class="container mt-5 pt-5">
-    <div class="row">
+    <div class="row {% if perfil and perfil.rol != 'lector' %}justify-content-center{% endif %}">
         <!-- Información del Usuario -->
-        <div class="col-md-4 mb-4">
+        <div class="{% if perfil and perfil.rol != 'lector' %}col-md-6 col-lg-5{% else %}col-md-4{% endif %} mb-4">
             <div class="card shadow">
                 <div class="card-body text-center">
                     <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
@@ -28,9 +28,15 @@
                         </p>
                     {% endif %}
                     <hr>
-                    <button type="button" class="btn btn-info btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+                    <button type="button" class="btn btn-info {% if perfil and perfil.rol != 'lector' %}btn-lg{% else %}btn-sm{% endif %} w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
                         <i class="fas fa-edit me-1"></i> Editar Mi Perfil
                     </button>
+                    {% if perfil and perfil.rol != 'lector' %}
+                    <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg w-100">
+                        <i class="fas fa-home me-1"></i> Volver al Inicio
+                    </a>
+                    {% endif %}
+                    {% if not perfil or perfil.rol == 'lector' %}
                     <a href="{% url 'disponibilidad_libros' %}" class="btn btn-primary btn-sm w-100 mb-2">
                         <i class="fas fa-search me-1"></i> Buscar Libros
                     </a>
@@ -40,11 +46,13 @@
                     <a href="{% url 'registrar_devolucion' %}" class="btn btn-outline-success btn-sm w-100">
                         <i class="fas fa-undo me-1"></i> Devolver Libro
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Préstamos Activos -->
+        <!-- Préstamos Activos (solo para lectores) -->
+        {% if not perfil or perfil.rol == 'lector' %}
         <div class="col-md-8">
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary text-white">
@@ -146,6 +154,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 

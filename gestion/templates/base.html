@@ -35,7 +35,7 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'disponibilidad_libros' %}"><i class="fas fa-books me-1"></i>Catálogo</a></li>
                         
-                        {% if user.perfil.rol == 'bibliotecario' or user.perfil.rol == 'administrador' %}
+                        {% if user.perfil and user.perfil.rol == 'bibliotecario' or user.perfil and user.perfil.rol == 'administrador' %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'panel_bibliotecario' %}"><i class="fas fa-user-shield me-1"></i>Panel Bibliotecario</a></li>
                         {% endif %}
                         
@@ -45,7 +45,9 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{% url 'panel_usuario' %}"><i class="fas fa-user me-2"></i>Mi Panel</a></li>
-                                <li><a class="dropdown-item" href="{% url 'registrar_prestamo' %}"><i class="fas fa-book me-2"></i>Mis Préstamos</a></li>
+                                {% if not user.perfil or user.perfil.rol == 'lector' %}
+                                    <li><a class="dropdown-item" href="{% url 'registrar_prestamo' %}"><i class="fas fa-book me-2"></i>Mis Préstamos</a></li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
                             </ul>

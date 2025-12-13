@@ -15,19 +15,29 @@ def home(request):
 def dashboard(request):
     """
     Dashboard principal del sistema - Se adapta según el rol del usuario
-    Muestra nombre del usuario, opciones según su rol y préstamos activos del usuario
+    Muestra opciones según su rol y datos relevantes
     """
     # Obtener el perfil del usuario
     perfil = None
     if hasattr(request.user, 'perfil'):
         perfil = request.user.perfil
     
-    # Estadísticas generales
-    total_libros = Libro.objects.count()
-    libros_disponibles = Libro.objects.filter(disponible=True).count()
-    prestamos_activos_totales = Prestamo.objects.filter(fecha_devolucion_real__isnull=True).count()
+    # Contexto base para todos
+    context = {
+        'usuario': request.user,
+        'perfil': perfil,
+    }
     
-    # Préstamos activos del usuario actual (para lectores)
+    # Seleccionar template y preparar datos según el rol del usuario
+    if perfil:
+        if perfil.rol == 'administrador':
+            # Admin: no necesita estadísticas ni préstamos en el dashboard inicial
+            return render(request, 'dashboard_admin.html', context)
+        elif perfil.rol == 'bibliotecario':
+            # Bibliotecario: no necesita préstamos personales, solo gestión
+            return render(request, 'dashboard_bibliotecario.html', context)
+    
+    # Lector: necesita ver sus préstamos activos
     mis_prestamos = Prestamo.objects.filter(
         usuario=request.user,
         fecha_devolucion_real__isnull=True
@@ -41,15 +51,9 @@ def dashboard(request):
         prestamo.esta_vencido = dias_restantes < 0
         prestamo.dias_restantes_abs = abs(dias_restantes)
     
-    context = {
-        'usuario': request.user,
-        'perfil': perfil,
-        'total_libros': total_libros,
-        'libros_disponibles': libros_disponibles,
-        'prestamos_activos': prestamos_activos_totales,
-        'mis_prestamos': mis_prestamos,
-    }
-    return render(request, 'dashboard.html', context)
+    context['mis_prestamos'] = mis_prestamos
+    
+    return render(request, 'dashboard_lector.html', context)
 
 @login_required
 def registrar_prestamo(request):

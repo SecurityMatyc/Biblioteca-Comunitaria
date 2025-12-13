@@ -1,0 +1,36 @@
+{% extends "base_panel.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- DASHBOARD PARA ADMINISTRADORES -->
+<!-- TODO: Este dashboard debe ser implementado por el desarrollador del panel de administración -->
+
+<div class="container mt-5 pt-5">
+  <div class="text-center mb-5">
+    <h1 class="display-4">Panel de Administración</h1>
+    <p class="lead text-muted">Gestión completa del sistema</p>
+  </div>
+
+  <div class="alert alert-info text-center">
+    <i class="fas fa-info-circle fa-3x mb-3"></i>
+    <h4>Panel en Construcción</h4>
+    <p class="mb-0">Este panel será desarrollado para gestionar usuarios, roles y configuración del sistema.</p>
+  </div>
+
+  <!-- TODO: Agregar opciones del administrador -->
+  <!-- Sugerencias:
+       - Gestión de usuarios (crear, editar, eliminar, cambiar roles)
+       - Configuración del sistema (días de préstamo, multas, etc.)
+       - Reportes y auditoría
+       - Estadísticas generales del sistema
+  -->
+
+  <div class="text-center mt-5">
+    <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg">
+      <i class="fas fa-home me-2"></i>Volver al Inicio
+    </a>
+  </div>
+</div>
+
+{% endblock %}
