@@ -24,18 +24,27 @@
             <h4 class="mb-0">Datos del Bibliotecario</h4>
           </div>
 
+
           <form method="post" novalidate>
             {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                <ul class="mb-0">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
 
-            <!-- USUARIO -->
-            <div class="mb-3">
-              <label class="form-label">Nombre de usuario</label>
-              {{ form.username }}
-            </div>
+            <!-- USUARIO (eliminado, username se genera automáticamente) -->
 
             <div class="mb-3">
               <label class="form-label">Correo electrónico</label>
               {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <!-- CONTRASEÑAS -->
@@ -43,10 +52,23 @@
               <div class="col-md-6 mb-3">
                 <label class="form-label">Contraseña</label>
                 {{ form.password1 }}
+                {% if form.password1.errors %}
+                  <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+                <div id="passwordHelp" class="form-text mt-1">
+                  <strong>Requisitos:</strong>
+                  <ul class="mb-0" style="padding-left: 18px;">
+                    <li id="pw-len" class="text-danger">Al menos 8 caracteres</li>
+                    <li id="pw-mix" class="text-danger">Debe contener letras y números</li>
+                  </ul>
+                </div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Confirmar contraseña</label>
                 {{ form.password2 }}
+                {% if form.password2.errors %}
+                  <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -58,16 +80,25 @@
             <div class="mb-3">
               <label class="form-label">RUT</label>
               {{ form.rut }}
+              {% if form.rut.errors %}
+                <div class="text-danger small mt-1">{{ form.rut.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <div class="mb-3">
               <label class="form-label">Dirección</label>
               {{ form.direccion }}
+              {% if form.direccion.errors %}
+                <div class="text-danger small mt-1">{{ form.direccion.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <div class="mb-4">
               <label class="form-label">Teléfono</label>
               {{ form.telefono }}
+              {% if form.telefono.errors %}
+                <div class="text-danger small mt-1">{{ form.telefono.errors.0 }}</div>
+              {% endif %}
             </div>
 
             <!-- BOTONES -->
@@ -81,7 +112,39 @@
               </a>
             </div>
 
+
           </form>
+          <script>
+          // Validación visual en tiempo real de contraseña
+          document.addEventListener('DOMContentLoaded', function() {
+            var pwInput = document.getElementById('id_password1');
+            if (pwInput) {
+              pwInput.addEventListener('input', function() {
+                var val = pwInput.value;
+                // Validación longitud
+                var len = document.getElementById('pw-len');
+                if (val.length >= 8) {
+                  len.classList.remove('text-danger');
+                  len.classList.add('text-success');
+                } else {
+                  len.classList.remove('text-success');
+                  len.classList.add('text-danger');
+                }
+                // Validación letras y números
+                var mix = document.getElementById('pw-mix');
+                var hasLetter = /[a-zA-Z]/.test(val);
+                var hasNumber = /[0-9]/.test(val);
+                if (hasLetter && hasNumber) {
+                  mix.classList.remove('text-danger');
+                  mix.classList.add('text-success');
+                } else {
+                  mix.classList.remove('text-success');
+                  mix.classList.add('text-danger');
+                }
+              });
+            }
+          });
+          </script>
 
         </div>
       </div>

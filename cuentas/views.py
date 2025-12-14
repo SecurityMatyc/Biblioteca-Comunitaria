@@ -76,7 +76,7 @@ def admin_toggle_usuario(request, user_id):
         return redirect("admin_usuarios")
     u.is_active = not u.is_active
     u.save()
-    messages.success(request, f"Usuario '{u.username}' actualizado. Activo={u.is_active}")
+    messages.success(request, f"Usuario '{u.username}' actualizado correctamente.")
     return redirect("admin_usuarios")
 
 @role_required("administrador")
