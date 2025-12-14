@@ -1,0 +1,104 @@
+{% extends "base_panel.html" %}
+{% block content %}
+<div class="container mt-5 pt-5">
+  <div class="text-center mb-4">
+    <h1 class="display-5">Multas y Préstamos Vencidos</h1>
+    <p class="text-muted mb-0">Fecha de reporte: {{ hoy }}</p>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-danger">
+        <div class="card-body text-center">
+          <h5 class="mb-1">Total estimado (vencidos activos)</h5>
+          <h2 class="mb-0">${{ total_estimado_vencidos }}</h2>
+          <small class="text-muted">Calculado como $1000 por día de atraso</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm border-warning">
+        <div class="card-body text-center">
+          <h5 class="mb-1">Total multas registradas (devueltos tarde)</h5>
+          <h2 class="mb-0">${{ total_multas_registradas }}</h2>
+          <small class="text-muted">Multas guardadas en el préstamo</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header bg-danger text-white">
+      <strong>Préstamos vencidos (activos)</strong>
+    </div>
+    <div class="card-body">
+      {% if vencidos %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Libro</th>
+              <th>Vence</th>
+              <th>Días atraso</th>
+              <th>Multa estimada</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in vencidos %}
+            <tr>
+              <td>{{ p.usuario.username }}</td>
+              <td>{{ p.libro.titulo }}</td>
+              <td>{{ p.fecha_devolucion_esperada }}</td>
+              <td><span class="badge bg-danger">{{ p.dias_atraso }}</span></td>
+              <td><strong>${{ p.multa_estimada }}</strong></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted mb-0">No hay préstamos vencidos actualmente.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-header bg-warning">
+      <strong>Multas registradas (últimos 50)</strong>
+    </div>
+    <div class="card-body">
+      {% if multas_registradas %}
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Libro</th>
+              <th>Devuelto</th>
+              <th>Multa</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in multas_registradas %}
+            <tr>
+              <td>{{ p.usuario.username }}</td>
+              <td>{{ p.libro.titulo }}</td>
+              <td>{{ p.fecha_devolucion_real }}</td>
+              <td><strong>${{ p.multa }}</strong></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted mb-0">Aún no hay multas registradas.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">Volver</a>
+  </div>
+</div>
+{% endblock %}

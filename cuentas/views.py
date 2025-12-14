@@ -6,7 +6,116 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
 from .models import PerfilUsuario
+from django.shortcuts import render, redirect, get_object_or_404
+from .restringir import role_required
+from .forms import CrearBibliotecarioForm
+from decimal import Decimal
+from django.db.models import Q
+from django.shortcuts import render
+from gestion.models import Libro, Prestamo
 import re
+
+
+@login_required
+def dashboard(request):
+    # Seguridad: si no tiene perfil
+    if not hasattr(request.user, "perfil"):
+        return redirect("panel_usuario")
+
+    rol = request.user.perfil.rol
+
+    if rol == "administrador":
+        return redirect("panel_admin")
+
+    if rol == "bibliotecario":
+        return redirect("panel_bibliotecario")
+
+    return redirect("panel_usuario")
+
+
+
+@login_required
+def dashboard_admin(request):
+    if request.user.perfil.rol != "administrador":
+        messages.error(request, "No tienes permisos para acceder a este panel.")
+        return redirect("dashboard")
+
+    hoy = timezone.now().date()
+
+    total_libros = Libro.objects.count()
+    total_usuarios = User.objects.count()
+    prestamos_vencidos = Prestamo.objects.filter(
+        fecha_devolucion_real__isnull=True,
+        fecha_devolucion_esperada__lt=hoy
+    ).count()
+
+    total_multas = sum(
+        p.multa for p in Prestamo.objects.filter(multa__gt=0)
+    )
+
+    context = {
+        "total_libros": total_libros,
+        "total_usuarios": total_usuarios,
+        "prestamos_vencidos": prestamos_vencidos,
+        "total_multas": total_multas,
+    }
+
+    return render(request, "dashboard_admin.html", context)
+
+
+@role_required("administrador")
+def admin_usuarios(request):
+    usuarios = User.objects.select_related("perfil").all().order_by("username")
+    return render(request, "admin/usuarios.html", {"usuarios": usuarios})
+
+@role_required("administrador")
+def admin_toggle_usuario(request, user_id):
+    u = get_object_or_404(User, id=user_id)
+    if u == request.user:
+        messages.error(request, "No puedes desactivarte a ti mismo.")
+        return redirect("admin_usuarios")
+    u.is_active = not u.is_active
+    u.save()
+    messages.success(request, f"Usuario '{u.username}' actualizado. Activo={u.is_active}")
+    return redirect("admin_usuarios")
+
+@role_required("administrador")
+def admin_crear_bibliotecario(request):
+    if request.method == "POST":
+        form = CrearBibliotecarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Bibliotecario creado correctamente.")
+            return redirect("admin_usuarios")
+    else:
+        form = CrearBibliotecarioForm()
+    return render(request, "admin/crear_bibliotecario.html", {"form": form})
+
+@role_required("administrador")
+def admin_cambiar_rol(request, user_id, rol):
+    u = get_object_or_404(User, id=user_id)
+
+    if rol not in ["lector", "bibliotecario", "administrador"]:
+        messages.error(request, "Rol inválido.")
+        return redirect("admin_usuarios")
+
+    # Crear perfil si no existe (forma segura)
+    PerfilUsuario.objects.get_or_create(
+        usuario=u,
+        defaults={
+            "rol": "lector",
+            "rut": f"SINRUT-{u.id}",
+            "direccion": "",
+            "telefono": "",
+        }
+    )
+
+    # Cambiar rol
+    u.perfil.rol = rol
+    u.perfil.save()
+
+    messages.success(request, f"Rol de '{u.username}' cambiado a {rol}.")
+    return redirect("admin_usuarios")
 
 
 def validar_rut(rut):
@@ -339,6 +448,49 @@ def panel_bibliotecario(request):
     return render(request, 'panel_bibliotecario.html', context)
 
 
+@login_required
+def ver_multas(request):
+    # Solo bibliotecario/admin
+    if not hasattr(request.user, "perfil") or request.user.perfil.rol not in ["bibliotecario", "administrador"]:
+        messages.error(request, "No tienes permisos para acceder a esta sección.")
+        return redirect("dashboard")
+
+    from gestion.models import Prestamo
+
+    hoy = timezone.now().date()
+    multa_por_dia = Decimal("1000.00")
+
+    # 1) Préstamos vencidos (activos, no devueltos)
+    vencidos = Prestamo.objects.filter(
+        fecha_devolucion_real__isnull=True,
+        fecha_devolucion_esperada__lt=hoy
+    ).select_related("usuario", "libro").order_by("fecha_devolucion_esperada")
+
+    # calcular multa estimada al día
+    for p in vencidos:
+        dias_atraso = (hoy - p.fecha_devolucion_esperada).days
+        p.dias_atraso = dias_atraso
+        p.multa_estimada = multa_por_dia * dias_atraso
+
+    # 2) Multas registradas (ya devueltos y multa > 0)
+    multas_registradas = Prestamo.objects.filter(
+        fecha_devolucion_real__isnull=False,
+        multa__gt=0
+    ).select_related("usuario", "libro").order_by("-fecha_devolucion_real")[:50]
+
+    total_estimado_vencidos = sum((p.multa_estimada for p in vencidos), Decimal("0.00"))
+    total_multas_registradas = sum((p.multa for p in multas_registradas), Decimal("0.00"))
+
+    context = {
+        "hoy": hoy,
+        "vencidos": vencidos,
+        "multas_registradas": multas_registradas,
+        "total_estimado_vencidos": total_estimado_vencidos,
+        "total_multas_registradas": total_multas_registradas,
+    }
+    return render(request, "ver_multas.html", context)
+
+
 # ==================== PANEL DE USUARIO ====================
 
 @login_required
@@ -381,3 +533,26 @@ def panel_usuario(request):
         'total_prestamos_activos': mis_prestamos.count(),
     }
     return render(request, 'panel_usuario.html', context)
+
+
+
+@login_required
+def panel_admin(request):
+    if not hasattr(request.user, "perfil") or request.user.perfil.rol != "administrador":
+        messages.error(request, "No tienes permisos para acceder a este panel.")
+        return redirect("dashboard")
+
+    total_libros = Libro.objects.count()
+    total_usuarios = User.objects.count()
+    prestamos_activos = Prestamo.objects.filter(fecha_devolucion_real__isnull=True).count()
+    multas_totales = Prestamo.objects.filter(multa__gt=0)
+
+    total_multas = sum(p.multa for p in multas_totales)
+
+    context = {
+        "total_libros": total_libros,
+        "total_usuarios": total_usuarios,
+        "prestamos_activos": prestamos_activos,
+        "total_multas": total_multas,
+    }
+    return render(request, "dashboard_admin.html", context)

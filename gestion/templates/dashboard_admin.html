@@ -1,10 +1,6 @@
 {% extends "base_panel.html" %}
 {% load static %}
-
 {% block content %}
-
-<!-- DASHBOARD PARA ADMINISTRADORES -->
-<!-- TODO: Este dashboard debe ser implementado por el desarrollador del panel de administración -->
 
 <div class="container mt-5 pt-5">
   <div class="text-center mb-5">
@@ -12,20 +8,92 @@
     <p class="lead text-muted">Gestión completa del sistema</p>
   </div>
 
-  <div class="alert alert-info text-center">
-    <i class="fas fa-info-circle fa-3x mb-3"></i>
-    <h4>Panel en Construcción</h4>
-    <p class="mb-0">Este panel será desarrollado para gestionar usuarios, roles y configuración del sistema.</p>
+  <!-- ESTADÍSTICAS (mismo estilo que panel_bibliotecario) -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-primary">
+        <div class="card-body">
+          <i class="fas fa-book fa-3x text-primary mb-3"></i>
+          <h2 class="display-4 mb-0">{{ total_libros }}</h2>
+          <p class="text-muted mb-0">Total de Libros</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-warning">
+        <div class="card-body">
+          <i class="fas fa-book-open fa-3x text-warning mb-3"></i>
+          <h2 class="display-4 mb-0">{{ prestamos_activos }}</h2>
+          <p class="text-muted mb-0">Préstamos Activos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-danger">
+        <div class="card-body">
+          <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+          <h2 class="display-4 mb-0">{{ prestamos_vencidos }}</h2>
+          <p class="text-muted mb-0">Préstamos Vencidos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm border-success">
+        <div class="card-body">
+          <i class="fas fa-tags fa-3x text-success mb-3"></i>
+          <h2 class="display-4 mb-0">{{ generos_diferentes }}</h2>
+          <p class="text-muted mb-0">Géneros Diferentes</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- TODO: Agregar opciones del administrador -->
-  <!-- Sugerencias:
-       - Gestión de usuarios (crear, editar, eliminar, cambiar roles)
-       - Configuración del sistema (días de préstamo, multas, etc.)
-       - Reportes y auditoría
-       - Estadísticas generales del sistema
-  -->
+  <!-- ACCIONES (no se pierden los botones que ya tienes) -->
+  <div class="row g-4 justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body text-center p-5">
+          <i class="fas fa-users-cog fa-4x text-primary mb-4"></i>
+          <h4 class="card-title mb-3">Gestionar Usuarios</h4>
+          <p class="text-muted mb-4">Ver usuarios, activar/desactivar y roles</p>
+          <a href="{% url 'admin_usuarios' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-arrow-right me-2"></i>Acceder
+          </a>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-md-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body text-center p-5">
+          <i class="fas fa-user-plus fa-4x text-success mb-4"></i>
+          <h4 class="card-title mb-3">Crear Bibliotecario</h4>
+          <p class="text-muted mb-4">Registrar nuevos bibliotecarios en el sistema</p>
+          <a href="{% url 'admin_crear_bibliotecario' %}" class="btn btn-success btn-lg">
+            <i class="fas fa-arrow-right me-2"></i>Acceder
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-lg border-0 h-100">
+        <div class="card-body text-center p-5">
+          <i class="fas fa-money-bill-wave fa-4x text-warning mb-4"></i>
+          <h4 class="card-title mb-3">Multas</h4>
+          <p class="text-muted mb-4">Ver atrasos, vencidos y multas registradas</p>
+          <a href="{% url 'ver_multas' %}" class="btn btn-warning btn-lg">
+            <i class="fas fa-arrow-right me-2"></i>Acceder
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÓN VOLVER AL INICIO (correcto) -->
   <div class="text-center mt-5">
     <a href="{% url 'home' %}" class="btn btn-outline-dark btn-lg">
       <i class="fas fa-home me-2"></i>Volver al Inicio

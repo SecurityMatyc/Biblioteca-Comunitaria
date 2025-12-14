@@ -13,4 +13,6 @@ urlpatterns = [
     
     # Gestión de libros (Bibliotecarios)
     path('gestionar-libros/', views.gestionar_libros, name='gestionar_libros'),
+    path("prestamos/activos/", views.prestamos_activos, name="prestamos_activos"),
+
 ]

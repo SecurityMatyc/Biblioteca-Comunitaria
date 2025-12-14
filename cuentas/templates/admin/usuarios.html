@@ -1,0 +1,39 @@
+{% extends "base_panel.html" %}
+{% block content %}
+<div class="container mt-5 pt-5">
+  <h2 class="mb-4">Usuarios</h2>
+
+  <a class="btn btn-outline-dark mb-3" href="{% url 'dashboard' %}">Volver</a>
+  <a class="btn btn-dark mb-3" href="{% url 'admin_crear_bibliotecario' %}">Crear bibliotecario</a>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Rol</th>
+          <th>Activo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td>{% if u.perfil %}{{ u.perfil.rol }}{% else %}sin perfil{% endif %}</td>
+          <td>{{ u.is_active }}</td>
+          <td>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'admin_toggle_usuario' u.id %}">
+              {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+            </a>
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'lector' %}">Lector</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'bibliotecario' %}">Bibliotecario</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'administrador' %}">Admin</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

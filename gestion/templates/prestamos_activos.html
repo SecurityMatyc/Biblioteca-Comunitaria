@@ -1,0 +1,59 @@
+{% extends "base_panel.html" %}
+{% block content %}
+
+<div class="container mt-5 pt-5">
+  <div class="text-center mb-4">
+    <h1 class="display-5">Préstamos Activos</h1>
+    <p class="text-muted">Libros actualmente prestados y sus usuarios</p>
+  </div>
+
+  <div class="card shadow">
+    <div class="card-body p-0">
+
+      {% if prestamos %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Libro</th>
+              <th>Usuario</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Fecha préstamo</th>
+              <th>Dev. esperada</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in prestamos %}
+            <tr>
+              <td>{{ p.libro.titulo }}</td>
+              <td>{{ p.usuario.username }}</td>
+              <td>{{ p.usuario.email|default:"-" }}</td>
+              <td>{{ p.usuario.perfil.telefono|default:"-" }}</td>
+              <td>{{ p.usuario.perfil.direccion|default:"-" }}</td>
+              <td>{{ p.fecha_prestamo }}</td>
+              <td>{{ p.fecha_devolucion_esperada }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="p-5 text-center text-muted">
+          <i class="fas fa-check-circle fa-3x mb-3"></i>
+          <p>No hay préstamos activos actualmente.</p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-dark btn-lg">
+      Volver al Panel
+    </a>
+  </div>
+</div>
+
+{% endblock %}

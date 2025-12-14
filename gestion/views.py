@@ -13,47 +13,60 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    """
-    Dashboard principal del sistema - Se adapta según el rol del usuario
-    Muestra opciones según su rol y datos relevantes
-    """
-    # Obtener el perfil del usuario
     perfil = None
     if hasattr(request.user, 'perfil'):
         perfil = request.user.perfil
-    
-    # Contexto base para todos
+
     context = {
         'usuario': request.user,
         'perfil': perfil,
     }
-    
-    # Seleccionar template y preparar datos según el rol del usuario
+
     if perfil:
         if perfil.rol == 'administrador':
-            # Admin: no necesita estadísticas ni préstamos en el dashboard inicial
+            fecha_actual = timezone.now().date()
+
+            total_libros = Libro.objects.count()
+            prestamos_activos = Prestamo.objects.filter(
+                fecha_devolucion_real__isnull=True
+            ).count()
+            prestamos_vencidos = Prestamo.objects.filter(
+                fecha_devolucion_real__isnull=True,
+                fecha_devolucion_esperada__lt=fecha_actual
+            ).count()
+            generos_diferentes = Libro.objects.values('genero').distinct().count()
+
+            context.update({
+                "total_libros": total_libros,
+                "prestamos_activos": prestamos_activos,
+                "prestamos_vencidos": prestamos_vencidos,
+                "generos_diferentes": generos_diferentes,
+            })
+
             return render(request, 'dashboard_admin.html', context)
+
         elif perfil.rol == 'bibliotecario':
-            # Bibliotecario: no necesita préstamos personales, solo gestión
             return render(request, 'dashboard_bibliotecario.html', context)
-    
-    # Lector: necesita ver sus préstamos activos
-    mis_prestamos = Prestamo.objects.filter(
-        usuario=request.user,
-        fecha_devolucion_real__isnull=True
-    ).select_related('libro').order_by('fecha_devolucion_esperada')
-    
-    # Calcular días restantes para cada préstamo
-    fecha_actual = timezone.now().date()
-    for prestamo in mis_prestamos:
-        dias_restantes = (prestamo.fecha_devolucion_esperada - fecha_actual).days
-        prestamo.dias_restantes = dias_restantes
-        prestamo.esta_vencido = dias_restantes < 0
-        prestamo.dias_restantes_abs = abs(dias_restantes)
-    
-    context['mis_prestamos'] = mis_prestamos
-    
-    return render(request, 'dashboard_lector.html', context)
+
+        elif perfil.rol == 'lector':
+            mis_prestamos = Prestamo.objects.filter(
+                usuario=request.user,
+                fecha_devolucion_real__isnull=True
+            ).select_related('libro').order_by('fecha_devolucion_esperada')
+
+            fecha_actual = timezone.now().date()
+            for prestamo in mis_prestamos:
+                dias_restantes = (prestamo.fecha_devolucion_esperada - fecha_actual).days
+                prestamo.dias_restantes = dias_restantes
+                prestamo.esta_vencido = dias_restantes < 0
+                prestamo.dias_restantes_abs = abs(dias_restantes)
+
+            context['mis_prestamos'] = mis_prestamos
+            return render(request, 'dashboard_lector.html', context)
+
+    # fallback de seguridad
+    return redirect('home')
+
 
 @login_required
 def registrar_prestamo(request):
@@ -248,6 +261,7 @@ def gestionar_libros(request):
     - Editar libros (modal o formulario inline)
     - Eliminar libros
     """
+
     # Verificar permisos
     if not hasattr(request.user, 'perfil') or request.user.perfil.rol not in ['bibliotecario', 'administrador']:
         messages.error(request, 'No tienes permisos para acceder a esta sección.')
@@ -328,3 +342,21 @@ def gestionar_libros(request):
         'libro_editar': libro_editar,  # Para mostrar el formulario de edición
     }
     return render(request, 'gestionar_libros.html', context)
+
+@login_required
+def prestamos_activos(request):
+    if not hasattr(request.user, "perfil") or request.user.perfil.rol not in ["bibliotecario", "administrador"]:
+        messages.error(request, "No tienes permisos para acceder a esta sección.")
+        return redirect("dashboard")
+
+    prestamos = Prestamo.objects.select_related(
+        "libro",
+        "usuario",
+        "usuario__perfil"
+    ).filter(
+        fecha_devolucion_real__isnull=True
+    ).order_by("fecha_prestamo")
+
+    return render(request, "prestamos_activos.html", {
+        "prestamos": prestamos
+    })
