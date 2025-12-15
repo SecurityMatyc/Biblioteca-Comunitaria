@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from cuentas.restringir import login_exigido
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Count
@@ -16,7 +17,8 @@ from gestion.models import Libro, Prestamo
 import re
 
 
-@login_required
+@login_exigido
+@login_exigido
 def dashboard(request):
     # Seguridad: si no tiene perfil
     if not hasattr(request.user, "perfil"):
@@ -34,7 +36,7 @@ def dashboard(request):
 
 
 
-@login_required
+@login_exigido
 def dashboard_admin(request):
     if request.user.perfil.rol != "administrador":
         messages.error(request, "No tienes permisos para acceder a este panel.")
@@ -94,8 +96,12 @@ def admin_crear_bibliotecario(request):
 @role_required("administrador")
 def admin_cambiar_rol(request, user_id, rol):
     u = get_object_or_404(User, id=user_id)
+    # No permitir que el admin se cambie su propio rol
+    if u == request.user:
+        messages.error(request, "No puedes cambiarte tu propio rol.")
+        return redirect("admin_usuarios")
 
-    if rol not in ["lector", "bibliotecario", "administrador"]:
+    if rol not in ["lector", "bibliotecario"]:
         messages.error(request, "Rol inválido.")
         return redirect("admin_usuarios")
 
@@ -310,7 +316,7 @@ def logout_view(request):
     return redirect("login")
 
 
-@login_required
+@login_exigido
 def editar_perfil(request):
     """Permite al usuario editar su perfil, username y contraseña"""
     if request.method == "POST":
@@ -416,7 +422,7 @@ def editar_perfil(request):
 
 # ==================== PANEL DE BIBLIOTECARIO ====================
 
-@login_required
+@login_exigido
 def panel_bibliotecario(request):
     """
     Panel exclusivo para bibliotecarios y administradores
@@ -424,8 +430,7 @@ def panel_bibliotecario(request):
     """
     # Verificar que el usuario es bibliotecario o administrador
     if not hasattr(request.user, 'perfil') or request.user.perfil.rol not in ['bibliotecario', 'administrador']:
-        messages.error(request, 'No tienes permisos para acceder a esta sección.')
-        return redirect('dashboard')
+        raise PermissionDenied
     
     # Importar modelos de gestion
     from gestion.models import Libro, Prestamo
@@ -448,12 +453,11 @@ def panel_bibliotecario(request):
     return render(request, 'panel_bibliotecario.html', context)
 
 
-@login_required
+@login_exigido
 def ver_multas(request):
     # Solo bibliotecario/admin
     if not hasattr(request.user, "perfil") or request.user.perfil.rol not in ["bibliotecario", "administrador"]:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect("dashboard")
+        raise PermissionDenied
 
     from gestion.models import Prestamo
 
@@ -493,7 +497,7 @@ def ver_multas(request):
 
 # ==================== PANEL DE USUARIO ====================
 
-@login_required
+@login_exigido
 def panel_usuario(request):
     """
     Panel personal del usuario (lector)
@@ -536,7 +540,7 @@ def panel_usuario(request):
 
 
 
-@login_required
+@login_exigido
 def panel_admin(request):
     if not hasattr(request.user, "perfil") or request.user.perfil.rol != "administrador":
         messages.error(request, "No tienes permisos para acceder a este panel.")

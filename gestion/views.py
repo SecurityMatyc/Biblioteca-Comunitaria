@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from cuentas.restringir import login_exigido
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta, datetime
@@ -11,7 +11,7 @@ def home(request):
     """Vista de inicio/home - redirige a index"""
     return render(request, 'index.html')
 
-@login_required
+@login_exigido
 def dashboard(request):
     perfil = None
     if hasattr(request.user, 'perfil'):
@@ -68,7 +68,7 @@ def dashboard(request):
     return redirect('home')
 
 
-@login_required
+@login_exigido
 def registrar_prestamo(request):
     """
     Funcionalidad 1: Registro de Préstamo con filtro de búsqueda
@@ -160,7 +160,7 @@ def registrar_prestamo(request):
     }
     return render(request, 'registrar_prestamo.html', context)
 
-@login_required
+@login_exigido
 def registrar_devolucion(request):
     """
     Funcionalidad 2: Registro de Devolución con Cálculo de Multas
@@ -217,7 +217,7 @@ def registrar_devolucion(request):
     }
     return render(request, 'registrar_devolucion.html', context)
 
-@login_required
+@login_exigido
 def disponibilidad_libros(request):
     """
     Funcionalidad 3: Consulta de Disponibilidad con filtro de búsqueda
@@ -252,7 +252,7 @@ def disponibilidad_libros(request):
 
 # ==================== GESTIÓN DE LIBROS (BIBLIOTECARIOS) ====================
 
-@login_required
+@login_exigido
 def gestionar_libros(request):
     """
     Vista UNIFICADA para:
@@ -343,7 +343,7 @@ def gestionar_libros(request):
     }
     return render(request, 'gestionar_libros.html', context)
 
-@login_required
+@login_exigido
 def prestamos_activos(request):
     if not hasattr(request.user, "perfil") or request.user.perfil.rol not in ["bibliotecario", "administrador"]:
         messages.error(request, "No tienes permisos para acceder a esta sección.")

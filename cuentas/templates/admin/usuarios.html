@@ -37,17 +37,20 @@
       <tbody>
         {% for u in usuarios %}
         <tr>
-          <td>{{ u.username }}</td>
+          <td>
+            {{ u.username }}{% if request.user.id == u.id %} <span class="text-muted">(Tú)</span>{% endif %}
+          </td>
           <td>{{ u.email }}</td>
           <td>{% if u.perfil %}{{ u.perfil.rol }}{% else %}sin perfil{% endif %}</td>
           <td>{{ u.is_active }}</td>
           <td>
-            <a class="btn btn-sm btn-outline-primary" href="{% url 'admin_toggle_usuario' u.id %}">
-              {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
-            </a>
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'lector' %}">Lector</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'bibliotecario' %}">Bibliotecario</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'administrador' %}">Admin</a>
+            {% if request.user.id != u.id %}
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'admin_toggle_usuario' u.id %}">
+                {% if u.is_active %}Desactivar{% else %}Activar{% endif %}
+              </a>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'lector' %}">Lector</a>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'admin_cambiar_rol' u.id 'bibliotecario' %}">Bibliotecario</a>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
