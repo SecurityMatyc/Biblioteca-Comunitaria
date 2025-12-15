@@ -4,7 +4,7 @@
 {% block content %}
 
 <!-- DASHBOARD PARA BIBLIOTECARIOS Y ADMINISTRADORES -->
-{% if perfil and perfil.rol in 'bibliotecario,administrador' %}
+{% if perfil and perfil.rol == 'bibliotecario' %}
 <div class="container mt-5 pt-5">
   <div class="text-center mb-5">
     <h1 class="display-4">Panel de Gestión</h1>

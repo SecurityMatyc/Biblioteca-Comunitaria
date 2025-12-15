@@ -262,8 +262,8 @@ def gestionar_libros(request):
     - Eliminar libros
     """
 
-    # Verificar permisos
-    if not hasattr(request.user, 'perfil') or request.user.perfil.rol not in ['bibliotecario', 'administrador']:
+    # Verificar permisos: solo bibliotecario
+    if not hasattr(request.user, 'perfil') or request.user.perfil.rol != 'bibliotecario':
         messages.error(request, 'No tienes permisos para acceder a esta sección.')
         return redirect('dashboard')
     
