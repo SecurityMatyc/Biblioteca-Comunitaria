@@ -1,79 +1,101 @@
-# Sistema de Gestión para Biblioteca Comunitaria
+# Biblioteca Comunitaria MJV 📚
 
-Sistema web desarrollado en Django para la gestión integral de una biblioteca comunitaria, permitiendo el control de préstamos, devoluciones, usuarios y catálogo de libros.
+Proyecto academico desarrollado durante 2025 para la **Evaluacion 4 de Ingenieria de Software**.
 
-## Requisitos
+Este sistema representa una biblioteca comunitaria ficticia orientada a la gestion de libros, usuarios y prestamos, con enfoque en una experiencia web funcional para lector, bibliotecario y administrador.
 
-- Python 3.10 o superior
-- pip
-- (Opcional) Entorno virtual (recomendado)
+## 👥 Autores
 
-## Instalación y configuración
+- Matias Gajardo
+- Jean Pierre Avastia
+- Valentina Roldan
 
-1. **Clona el repositorio:**
-   ```bash
-   git clone https://github.com/tuusuario/Biblioteca-Comunitaria.git
-   cd Biblioteca-Comunitaria
-   ```
+Trabajo realizado en conjunto como parte del proceso formativo en desarrollo de software.
 
-2. **Crea y activa un entorno virtual:**
-   ```bash
-   python -m venv env
-   # En Windows:
-   env\Scripts\activate
-   # En Linux/Mac:
-   source env/bin/activate
-   ```
+## 🧩 Descripcion del proyecto
 
-3. **Instala las dependencias:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+La aplicacion permite administrar los procesos principales de una biblioteca comunitaria moderna:
 
-- Las contraseñas de usuarios se almacenan de forma segura usando el sistema de Django (hash y sal).
-- No compartas tu `SECRET_KEY` ni credenciales de superusuario.
+- Registro y gestion de usuarios con roles.
+- Catalogo de libros con control de disponibilidad.
+- Registro de prestamos con validaciones de negocio.
+- Registro de devoluciones y calculo automatico de multas.
+- Paneles diferenciados para lector, bibliotecario y administrador.
 
-## Migraciones y base de datos
+Ademas de la parte de gestion, el proyecto incorpora una interfaz web responsive con un template visual cuidado, donde quedaron funcionales:
 
-1. **Aplica las migraciones:**
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
+- Inicio publico con secciones informativas.
+- Seccion de servicios.
+- Seccion de contacto.
+- Inicio de sesion.
+- Registro de cuenta.
 
-2. **Crea un superusuario (admin):**
-   ```bash
-   python manage.py createsuperuser
-   ```
+## ✨ Caracteristicas principales
 
-## Carga de datos de ejemplo (opcional)
+- CRUD de libros para perfil bibliotecario.
+- Control estricto de disponibilidad para evitar prestamos duplicados.
+- Multas automaticas por atraso (`$1000` por dia).
+- Consultas por busqueda en catalogo y vistas de disponibilidad.
+- Gestion administrativa de usuarios: activar/desactivar, cambio de rol y creacion de bibliotecarios.
+- Validaciones robustas en registro: RUT chileno, telefono y fortaleza de contrasena.
+- Dashboard con metricas de libros, prestamos y multas.
 
-Si deseas poblar la base de datos con datos de ejemplo, puedes crear fixtures o usar la interfaz de administración de Django (`/admin`).
+## 🛠️ Stack tecnologico
 
-## Ejecución del servidor
+- Python 3.13
+- Django 5.2.8
+- Django REST Framework (instalado en el proyecto)
+- HTML, CSS, JavaScript
+- Bootstrap 5
+- SQLite (base de datos por defecto)
 
-1. **Inicia el servidor de desarrollo:**
-   ```bash
-   python manage.py runserver
-   ```
+## 🗂️ Modulos del sistema
 
-2. Accede a la aplicación en [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- `cuentas`: autenticacion, registro, perfiles y control de roles.
+- `gestion`: catalogo de libros, prestamos, devoluciones, disponibilidad y reportes.
+- `biblioteca`: configuracion principal del proyecto Django.
 
-3. Para detener el servidor, presiona `Ctrl+C` en la terminal.
+## 🚀 Puesta en marcha local
 
-## Seguridad y buenas prácticas
+1. Clonar el repositorio.
+2. Entrar a la carpeta del proyecto.
+3. Crear y activar entorno virtual.
+4. Instalar dependencias.
+5. Aplicar migraciones.
+6. Iniciar servidor.
 
-- El sistema implementa validación de entrada, control de acceso por roles, manejo seguro de credenciales y errores personalizados.
-- Para producción, asegúrate de:
-  - Usar `DEBUG=False`.
-  - Configurar correctamente `ALLOWED_HOSTS`.
-  - Proteger tu `SECRET_KEY` y credenciales.
-  - Usar HTTPS.
-- Para más detalles, revisa el informe técnico adjunto.
+Comandos sugeridos en Windows PowerShell:
 
-## Estructura del proyecto
+```powershell
+python -m venv env
+.\env\Scripts\Activate.ps1
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
-- `biblioteca/` – Configuración principal de Django
-- `cuentas/` – Gestión de usuarios y autenticación
-- `gestion/` – Funcionalidad principal de la biblioteca
-- `requirements.txt` – Dependencias del proyecto
+Abrir en navegador:
+
+- `http://127.0.0.1:8000/` (sitio principal)
+- `http://127.0.0.1:8000/admin/` (panel Django Admin)
+- `http://127.0.0.1:8000/login/` (autenticacion)
+
+## ☁️ Despliegue
+
+Esta version del proyecto **no fue desplegada en AWS**.
+El foco principal fue consolidar una entrega academica final, funcional y completa.
+
+## 🎯 Contexto academico
+
+Este repositorio conserva una entrega importante del curso para revisar decisiones de diseno, estructura y avances logrados durante la asignatura.
+
+Proceso de trabajo considerado:
+
+- En las primeras unidades, el trabajo fue mayoritariamente teorico.
+- Antes de codificar, se desarrollaron mockups y planificacion paso a paso.
+- En la Evaluacion 3 se presento una version base del sistema.
+- En esta Evaluacion 4 se consolido la version final, con mejoras de interfaz, validaciones y flujo funcional completo.
+
+## 📌 Resumen
+
+Una base solida en Django para gestion bibliotecaria, desarrollada en equipo, con enfoque practico y buen nivel de cierre academico para servir como referencia en proyectos futuros.
