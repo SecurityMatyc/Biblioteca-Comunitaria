@@ -1,8 +1,10 @@
 # Biblioteca Comunitaria MJV 📚
 
-Proyecto academico desarrollado durante 2025 para la **Evaluacion 4 de Ingenieria de Software**.
+Proyecto académico desarrollado durante 2025 para la **Evaluación 4 de Ingeniería de Software**.
 
-Este sistema representa una biblioteca comunitaria ficticia orientada a la gestion de libros, usuarios y prestamos, con enfoque en una experiencia web funcional para lector, bibliotecario y administrador.
+Este sistema representa una biblioteca comunitaria ficticia orientada a la gestión de libros, usuarios y préstamos, con enfoque en una experiencia web funcional para lector, bibliotecario y administrador.
+
+Actualmente, el proyecto se encuentra **completamente funcional**, incluyendo inicio, servicios, contacto, inicio de sesión y registro de cuentas.
 
 ## 👥 Autores
 
@@ -12,35 +14,35 @@ Este sistema representa una biblioteca comunitaria ficticia orientada a la gesti
 
 Trabajo realizado en conjunto como parte del proceso formativo en desarrollo de software.
 
-## 🧩 Descripcion del proyecto
+## 🧩 Descripción del proyecto
 
-La aplicacion permite administrar los procesos principales de una biblioteca comunitaria moderna:
+La aplicación permite administrar los procesos principales de una biblioteca comunitaria moderna:
 
-- Registro y gestion de usuarios con roles.
-- Catalogo de libros con control de disponibilidad.
-- Registro de prestamos con validaciones de negocio.
-- Registro de devoluciones y calculo automatico de multas.
+- Registro y gestión de usuarios con roles.
+- Catálogo de libros con control de disponibilidad.
+- Registro de préstamos con validaciones de negocio.
+- Registro de devoluciones y cálculo automático de multas.
 - Paneles diferenciados para lector, bibliotecario y administrador.
 
-Ademas de la parte de gestion, el proyecto incorpora una interfaz web responsive con un template visual cuidado, donde quedaron funcionales:
+Además de la parte de gestión, el proyecto incorpora una interfaz web responsive con un template visual cuidado, donde quedaron funcionales:
 
-- Inicio publico con secciones informativas.
-- Seccion de servicios.
-- Seccion de contacto.
-- Inicio de sesion.
+- Inicio público con secciones informativas.
+- Sección de servicios.
+- Sección de contacto.
+- Inicio de sesión.
 - Registro de cuenta.
 
-## ✨ Caracteristicas principales
+## ✨ Características principales
 
 - CRUD de libros para perfil bibliotecario.
 - Control estricto de disponibilidad para evitar prestamos duplicados.
-- Multas automaticas por atraso (`$1000` por dia).
-- Consultas por busqueda en catalogo y vistas de disponibilidad.
-- Gestion administrativa de usuarios: activar/desactivar, cambio de rol y creacion de bibliotecarios.
-- Validaciones robustas en registro: RUT chileno, telefono y fortaleza de contrasena.
-- Dashboard con metricas de libros, prestamos y multas.
+- Multas automáticas por atraso (`$1000` por día).
+- Consultas por búsqueda en catálogo y vistas de disponibilidad.
+- Gestión administrativa de usuarios: activar/desactivar, cambio de rol y creación de bibliotecarios.
+- Validaciones robustas en registro: RUT chileno, teléfono y fortaleza de contraseña.
+- Dashboard con métricas de libros, préstamos y multas.
 
-## 🛠️ Stack tecnologico
+## 🛠️ Stack tecnológico
 
 - Python 3.13
 - Django 5.2.8
@@ -51,9 +53,9 @@ Ademas de la parte de gestion, el proyecto incorpora una interfaz web responsive
 
 ## 🗂️ Modulos del sistema
 
-- `cuentas`: autenticacion, registro, perfiles y control de roles.
-- `gestion`: catalogo de libros, prestamos, devoluciones, disponibilidad y reportes.
-- `biblioteca`: configuracion principal del proyecto Django.
+- `cuentas`: autenticación, registro, perfiles y control de roles.
+- `gestion`: catálogo de libros, préstamos, devoluciones, disponibilidad y reportes.
+- `biblioteca`: configuración principal del proyecto Django.
 
 ## 🚀 Puesta en marcha local
 
@@ -78,24 +80,24 @@ Abrir en navegador:
 
 - `http://127.0.0.1:8000/` (sitio principal)
 - `http://127.0.0.1:8000/admin/` (panel Django Admin)
-- `http://127.0.0.1:8000/login/` (autenticacion)
+- `http://127.0.0.1:8000/login/` (autenticación)
 
 ## ☁️ Despliegue
 
-Esta version del proyecto **no fue desplegada en AWS**.
-El foco principal fue consolidar una entrega academica final, funcional y completa.
+Esta versión del proyecto **no fue desplegada en AWS**.
+El foco principal fue consolidar una entrega académica final, funcional y completa.
 
-## 🎯 Contexto academico
+## 🎯 Contexto académico
 
-Este repositorio conserva una entrega importante del curso para revisar decisiones de diseno, estructura y avances logrados durante la asignatura.
+Este repositorio conserva una entrega importante del curso para revisar decisiones de diseño, estructura y avances logrados durante la asignatura.
 
 Proceso de trabajo considerado:
 
-- En las primeras unidades, el trabajo fue mayoritariamente teorico.
-- Antes de codificar, se desarrollaron mockups y planificacion paso a paso.
-- En la Evaluacion 3 se presento una version base del sistema.
-- En esta Evaluacion 4 se consolido la version final, con mejoras de interfaz, validaciones y flujo funcional completo.
+- En las primeras unidades, el trabajo fue mayoritariamente teórico.
+- Antes de codificar, se desarrollaron mockups y planificación paso a paso.
+- En la Evaluación 3 se presentó una versión base del sistema.
+- En esta Evaluación 4 se consolidó la versión final, con mejoras de interfaz, validaciones y flujo funcional completo.
 
 ## 📌 Resumen
 
-Una base solida en Django para gestion bibliotecaria, desarrollada en equipo, con enfoque practico y buen nivel de cierre academico para servir como referencia en proyectos futuros.
+Una base sólida en Django para gestión bibliotecaria, desarrollada en equipo, con enfoque práctico y buen nivel de cierre académico para servir como referencia en proyectos futuros.
